@@ -60,10 +60,11 @@ class csv_import_reader_for_task extends \csv_import_reader {
      * @inheritDoc
      */
     public function next() {
-        $data = next($this->data);
+        $data = current($this->data);
         if ($data === false) {
             return false;
         }
+        next($this->data);
         return array_values((array) $data);
     }
 

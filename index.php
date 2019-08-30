@@ -26,9 +26,8 @@
 use tool_asynccourseimport\processor_for_index;
 use tool_asynccourseimport\tracker;
 
-require(__DIR__ . '/../../config.php');
+require(__DIR__ . '/../../../config.php');
 require_once($CFG->libdir . '/adminlib.php');
-require_once($CFG->libdir . '/coursecatlib.php');
 require_once($CFG->libdir . '/csvlib.class.php');
 
 // Liip change the prefix.

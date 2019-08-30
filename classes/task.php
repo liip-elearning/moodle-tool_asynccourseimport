@@ -17,7 +17,6 @@
 namespace tool_asynccourseimport;
 
 require_once($CFG->libdir . '/adminlib.php');
-require_once($CFG->libdir . '/coursecatlib.php');
 require_once($CFG->libdir . '/csvlib.class.php');
 
 use core\task\adhoc_task;
@@ -62,7 +61,7 @@ class task extends adhoc_task {
         $defaults = (array) $data->defaults;
         $importid = $data->importid ?? csv_import_reader_for_task::get_new_iid('uploadcourse');
 
-        echo "Importing course batch task " . $this->get_id() . "";
+        echo "\nImporting course batch task [" . get_class($this) . " " . $this->get_id() . "]:\n";
         // This is a fake CSV reader, it just use "content" as if it came from the csv.
         $cir = new csv_import_reader_for_task($importid, 'uploadcourse', $content);
         // We run the Moodle tool_uploadcourse_processor with a PLAIN output.
