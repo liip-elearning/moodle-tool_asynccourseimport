@@ -21,16 +21,13 @@ use tool_uploadcourse_processor;
 use tool_uploadcourse_tracker;
 
 /**
- * Class processor_for_index
- * This processor will create an AdHock task to process course import asynchronously instead of processing them.
+ * Class tool_task_processor
+ * This processor will create an AdHock task to process course import asynchronously
+ * instead of processing them.
  *
  * @package tool_asynccourseimport
  */
-class processor_for_index extends tool_uploadcourse_processor {
-    /**
-     * A task will be created to handle MAX_BATCH_SIZE courses.
-     */
-    const MAX_BATCH_SIZE = 10;
+class tool_preview_processor extends tool_uploadcourse_processor {
 
     /**
      * @var array Import options
@@ -40,15 +37,6 @@ class processor_for_index extends tool_uploadcourse_processor {
      * @var array Buffer of CSV lines to be processed.
      */
     private $buffer;
-    /**
-     * @var int The buffer size (to avoid a count)
-     */
-    private $buffersize;
-
-    /**
-     * @var int batch number.
-     */
-    private $batchid = 1;
 
     /**
      * @var string id of the import, used to get the backup folder.
@@ -70,8 +58,6 @@ class processor_for_index extends tool_uploadcourse_processor {
         $this->defaults = $defaults;
         $this->importid = $importid;
         $this->buffer = [];
-        $this->buffersize = 0;
-        $this->batchid = 1;
         parent::__construct($cir, $options, $defaults);
     }
 
@@ -81,59 +67,39 @@ class processor_for_index extends tool_uploadcourse_processor {
         }
         $tracker->start();
 
-        $total = 0;
-        $this->buffer = [];
-        $this->buffersize = 0;
-        $this->linenb = 0;
+        $this->buffer = $this->get_content_from_cir($this->cir, $tracker);
 
+        if (!empty($this->buffer)) {
+            // TODO: Replace "2" by the actual logged in user.
+            $task = task::create($this->buffer, $this->options, $this->defaults, 2);
+            manager::queue_adhoc_task($task);
+            $this->buffer = [];
+        }
+
+        // Display the preview result (SCREEN 3)
+        $tracker->finish();
+        $tracker->results(count($this->buffer), count($this->buffer), 0, 0, null);
+        $this->cir->close();
+    }
+
+    private function get_content_from_cir(csv_import_reader $cir, $tracker = null) {
         // Loop over the CSV lines.
-        while ($line = $this->cir->next()) {
-            if ($this->buffersize >= self::MAX_BATCH_SIZE) {
-                $this->createTasksFromBuffer();
-            }
-
+        $buffer = [];
+        $this->linenb = 0;
+        while ($line = $cir->next()) {
             $line = $this->parse_line($line);
             $course = $this->get_course($line);
             // Note that you can also avoid the "prepare" call to be faster, but the output will have less sense.
             $result = $course->prepare();
-            if (!$result) {
+            if (!$result && $tracker) {
                 // Display errors.
                 $tracker->output($this->linenb, $result, $course->get_errors(), $line);
             } else {
                 // On success, we add the line to the buffer so it will be processed in a task.
-                $status = array_merge(["Scheduled in batch " . $this->batchid . "."], $course->get_statuses());
-
                 $this->linenb++;
-                $tracker->output($this->linenb, $result, $status, $line + ["id" => "-"]);
-                $total++;
-                $this->buffer[] = $line;
-                $this->buffersize++;
+                $buffer[] = $line;
             }
-
         }
-
-        // Be sure that the remaining buffer is handled.
-        if (!empty($this->buffer)) {
-            $this->createTasksFromBuffer();
-        }
-
-        // Display the result.
-        $tracker->finish();
-        $tracker->results($total, $total, 0, 0, null);
-        $this->cir->close();
-    }
-
-    /**
-     * Creates an Ad-Hock task to process x courses, based on the parsed CSV lines that are on the buffer.
-     */
-    private function createTasksFromBuffer() {
-        if (empty($this->buffer)) {
-            return;
-        }
-        $task = task::create($this->buffer, $this->options, $this->defaults, $this->linenb, $this->importid);
-        manager::queue_adhoc_task($task);
-        $this->buffer = [];
-        $this->buffersize = 0;
-        $this->batchid++;
+        return $buffer;
     }
 }

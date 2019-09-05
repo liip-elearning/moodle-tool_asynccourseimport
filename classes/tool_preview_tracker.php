@@ -23,11 +23,12 @@ use tool_uploadcourse_tracker;
  *
  * @package tool_asynccourseimport
  */
-class tracker extends tool_uploadcourse_tracker {
+class tool_preview_tracker extends tool_uploadcourse_tracker {
     /**
      * @inheritDoc
      */
     public function results($total, $created, $updated, $deleted, $errors) {
+        echo "\n ----- tool_asyncuploadcourse_tracker ----- \n\n";
 
         if ($this->outputmode === self::NO_OUTPUT) {
             return;

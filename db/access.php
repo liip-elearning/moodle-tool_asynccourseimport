@@ -1,5 +1,5 @@
 <?php
-// This file is part of the blocks/disk_quota Moodle plugin
+// This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -13,14 +13,27 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 /**
- * Version details
+ * Access permission for tool asynccourseimport
  *
  * @package    tool_asynccourseimport
- * @copyright  2019 Liip AG
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  2019 Liip SA <elearning@liip.ch>
  */
+
 defined('MOODLE_INTERNAL') || die();
-$plugin->version   = 2019061401;         // The current plugin version (Date: YYYYMMDDXX).
-$plugin->requires  = 2018051700;         // minimum: Moodle 3.5
-$plugin->component = 'tool_asynccourseimport'; // Full name of the plugin (used for diagnostics).
+
+$capabilities = [
+    'tool/asynccourseimport:view_notification' => [
+        'riskbitmask' => RISK_PERSONAL,
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_SYSTEM,
+        'archetypes' => [
+            'teacher' => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW,
+            'manager' => CAP_ALLOW,
+            'coursecreator' => CAP_ALLOW
+        ],
+        'clonepermissionsfrom' => 'moodle/site:viewreports',
+    ]
+];

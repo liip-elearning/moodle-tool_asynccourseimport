@@ -15,31 +15,43 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Bulk course registration script from a comma separated file.
+ * Bulk asynchronous course import.
+ *
+ * - Upload a CSV file
+ * - Preview the courses
+ * - Setup adhoc task run
+ *
  * This is based on "admin/tool/uploadcourse/index.php"
+ * and modified to use the adhoc task.
  *
  * @package    tool_asynccourseimport
  * @copyright  Liip SA
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-use tool_asynccourseimport\processor_for_index;
-use tool_asynccourseimport\tracker;
+use tool_asynccourseimport\tool_preview_processor;
+use tool_asynccourseimport\tool_preview_tracker;
 
 require(__DIR__ . '/../../../config.php');
 require_once($CFG->libdir . '/adminlib.php');
 require_once($CFG->libdir . '/csvlib.class.php');
 
-// Liip change the prefix.
+// Setup the page in "Site admnistration"
 admin_externalpage_setup('asynccourseimport');
 
+// Import unique ID used by the CSV Import reader.
+// Used as filename for a temporary file. Not DB related.
+// Parameter sent when submitting the 2nd screen
 $importid = optional_param('importid', '', PARAM_INT);
+
+// How rows to preview. Parameter sent submitting the 1st screen.
 $previewrows = optional_param('previewrows', 10, PARAM_INT);
 
 // Liip Change return url.
 $returnurl = new moodle_url('/admin/tool/asynccourseimport/index.php');
 
 if (empty($importid)) {
+    // SCREEN 1 & 2
     $mform1 = new tool_uploadcourse_step1_form();
     if ($form1data = $mform1->get_data()) {
         $importid = csv_import_reader::get_new_iid('uploadcourse');
@@ -60,11 +72,13 @@ if (empty($importid)) {
         die();
     }
 } else {
+    // SCREEN 3
     $cir = new csv_import_reader($importid, 'uploadcourse');
 }
 
-// Data to set in the form.
+// Data to set in the form. (Screens 2 & 3)
 $data = array('importid' => $importid, 'previewrows' => $previewrows);
+
 if (!empty($form1data)) {
     // Get options from the first form to pass it onto the second.
     foreach ($form1data->options as $key => $value) {
@@ -72,14 +86,21 @@ if (!empty($form1data)) {
     }
 }
 $context = context_system::instance();
-$mform2 = new tool_uploadcourse_step2_form(null, array('contextid' => $context->id, 'columns' => $cir->get_columns(),
-        'data' => $data));
+$mform2 = new tool_uploadcourse_step2_form(null, array(
+    'contextid' => $context->id,
+    'columns' => $cir->get_columns(),
+    'data' => $data
+));
 
 // If a file has been uploaded, then process it.
 if ($form2data = $mform2->is_cancelled()) {
     $cir->cleanup(true);
     redirect($returnurl);
 } else if ($form2data = $mform2->get_data()) {
+
+//    echo "<div style='clear:both;margin-top: 80px;'><pre>";
+//    var_dump($form2data);
+//    echo "</pre></div>";
 
     $options = (array) $form2data->options;
     $defaults = (array) $form2data->defaults;
@@ -91,8 +112,12 @@ if ($form2data = $mform2->is_cancelled()) {
         $options['restorefile'] = $mform2->save_temp_file('restorefile');
     }
 
+//    echo "<div style='clear:both;margin-top: 80px;'><pre>";
+//    var_dump($options['restorefile']);
+//    echo "</pre></div>";
+
     // Liip: The processor is different. It will create tasks.
-    $processor = new processor_for_index($cir, $options, $defaults, $importid);
+    $processor = new tool_preview_processor($cir, $options, $defaults, $importid);
 
     echo $OUTPUT->header();
     if (isset($form2data->showpreview)) {
@@ -102,7 +127,7 @@ if ($form2data = $mform2->is_cancelled()) {
     } else {
         echo $OUTPUT->heading(get_string('uploadcoursesresult', 'tool_uploadcourse'));
         // Liip: The tracker is different.
-        $processor->execute(new tracker(tool_uploadcourse_tracker::OUTPUT_HTML));
+        $processor->execute(new tool_preview_tracker(tool_uploadcourse_tracker::OUTPUT_HTML));
         echo $OUTPUT->continue_button($returnurl);
     }
 
