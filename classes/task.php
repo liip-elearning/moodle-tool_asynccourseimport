@@ -75,7 +75,7 @@ class task extends adhoc_task {
 
         $processor = new tool_asyncuploadcourse_processor($cir, $options, $defaults);
         $task_tracker = new tool_uploadcourse_tracker(tool_uploadcourse_tracker::OUTPUT_PLAIN);
-        $processor->execute($task_tracker);
+        $processor->execute($task_tracker, $this->get_userid(), $this->get_id());
 
         $errors = $processor->get_errors();
 
@@ -100,10 +100,8 @@ class task extends adhoc_task {
             $record = manager::record_from_adhoc_task($this);
             $DB->update_record('task_adhoc', $record);
 
-            // TODO Log => get_class($this) / $this->get_id() / $errors.
-
             // Throw an error, so that the task fails and is rescheduled.
-            throw new \RuntimeException("Unable to complete the course import batch");
+            throw new \RuntimeException(get_string("task_incomplete", "tool_asynccourseimport"));
         }
 
         // No RuntimeException => OVER

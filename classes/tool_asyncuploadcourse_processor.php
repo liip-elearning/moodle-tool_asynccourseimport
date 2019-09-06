@@ -47,11 +47,13 @@ class tool_asyncuploadcourse_processor extends tool_uploadcourse_processor {
      * Execute the process.
      *
      * @param object $tracker the output tracker to use.
+     * @param null $userid
+     * @param null $taskid
      * @return void
-     * @throws \coding_exception
      * @throws \moodle_exception
+     * @throws coding_exception
      */
-    public function execute($tracker = null) {
+    public function execute($tracker = null, $userid = null, $taskid = null) {
         if ($this->processstarted) {
             throw new coding_exception('Process has already been started');
         }
@@ -100,7 +102,7 @@ class tool_asyncuploadcourse_processor extends tool_uploadcourse_processor {
                 $tracker->output($this->linenb, false, $course->get_errors(), $data);
 
                 // CUSTOM / EXTENSION
-                $this->log_error($course->get_errors(), $data);
+                $this->log_error($course->get_errors(), $data, $userid, $taskid);
             }
         }
 
@@ -118,13 +120,20 @@ class tool_asyncuploadcourse_processor extends tool_uploadcourse_processor {
      *
      * @param array $errors array of errors
      * @param null $data
+     * @param null $userid
+     * @param null $taskid
      * @return void
+     * @throws coding_exception
      */
-    protected function log_error($errors, $data = null) {
+    protected function log_error($errors, $data = null, $userid = null, $taskid = null) {
+        global $PAGE;
+
         if (empty($errors)) {
             return;
         }
 
+        // Set data for the report (sent by the caller task)
+        /** @var \lang_string $langstring */
         foreach ($errors as $code => $langstring) {
             if (!isset($this->errors[$this->linenb])) {
                 $this->errors[$this->linenb] = array();
@@ -132,6 +141,18 @@ class tool_asyncuploadcourse_processor extends tool_uploadcourse_processor {
             $this->errors[$this->linenb][$code] = $langstring;
             $this->errors[$this->linenb]['data'] = $data;
         }
+
+        // Send an event to log the error on the server
+        $event = \tool_asynccourseimport\event\importcourse_error::create(array(
+            'context' => $PAGE->context,
+            'other' => [
+                "shortname" => $data['shortname'],
+                "reason" => $langstring->out(),
+                "userid" => $userid,
+                "task_id" => $taskid,
+            ]
+        ));
+        $event->trigger();
     }
 
     protected function prepare_report($total, $created, $updated, $deleted, $errors){

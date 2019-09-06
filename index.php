@@ -36,6 +36,13 @@ require(__DIR__ . '/../../../config.php');
 require_once($CFG->libdir . '/adminlib.php');
 require_once($CFG->libdir . '/csvlib.class.php');
 
+// Get USER
+require_login(null, false);
+if (isguestuser()) {
+    throw new require_login_exception('Guests are not allowed here.');
+}
+$userid = optional_param('userid', $USER->id, PARAM_INT);
+
 // Setup the page in "Site admnistration"
 admin_externalpage_setup('asynccourseimport');
 
@@ -117,7 +124,7 @@ if ($form2data = $mform2->is_cancelled()) {
 //    echo "</pre></div>";
 
     // Liip: The processor is different. It will create tasks.
-    $processor = new tool_preview_processor($cir, $options, $defaults, $importid);
+    $processor = new tool_preview_processor($cir, $options, $defaults, $importid, $userid);
 
     echo $OUTPUT->header();
     if (isset($form2data->showpreview)) {

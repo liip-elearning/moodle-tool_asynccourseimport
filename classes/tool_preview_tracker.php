@@ -19,7 +19,7 @@ use html_writer;
 use tool_uploadcourse_tracker;
 
 /**
- * tracker. Just change the result message.
+ * Preview report / SCREEN
  *
  * @package tool_asynccourseimport
  */
@@ -28,8 +28,6 @@ class tool_preview_tracker extends tool_uploadcourse_tracker {
      * @inheritDoc
      */
     public function results($total, $created, $updated, $deleted, $errors) {
-        echo "\n ----- tool_asyncuploadcourse_tracker ----- \n\n";
-
         if ($this->outputmode === self::NO_OUTPUT) {
             return;
         }

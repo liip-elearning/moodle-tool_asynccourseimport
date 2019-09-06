@@ -44,6 +44,11 @@ class tool_preview_processor extends tool_uploadcourse_processor {
     private $importid;
 
     /**
+     * @var int the ID of the user who ordered the import task
+     */
+    private $userid;
+
+    /**
      * processor constructor.
      *
      * @param csv_import_reader $cir
@@ -52,11 +57,12 @@ class tool_preview_processor extends tool_uploadcourse_processor {
      * @param string $importid The import id.
      * @throws \coding_exception
      */
-    public function __construct(csv_import_reader $cir, array $options, array $defaults, $importid) {
+    public function __construct(csv_import_reader $cir, array $options, array $defaults, $importid, $userid) {
 
         $this->options = $options;
         $this->defaults = $defaults;
         $this->importid = $importid;
+        $this->userid = $userid;
         $this->buffer = [];
         parent::__construct($cir, $options, $defaults);
     }
@@ -70,8 +76,7 @@ class tool_preview_processor extends tool_uploadcourse_processor {
         $this->buffer = $this->get_content_from_cir($this->cir, $tracker);
 
         if (!empty($this->buffer)) {
-            // TODO: Replace "2" by the actual logged in user.
-            $task = task::create($this->buffer, $this->options, $this->defaults, 2);
+            $task = task::create($this->buffer, $this->options, $this->defaults, $this->userid);
             manager::queue_adhoc_task($task);
             $this->buffer = [];
         }
