@@ -80,7 +80,6 @@ class tool_preview_processor extends tool_uploadcourse_processor {
         if (!empty($this->buffer)) {
             $task = task::create($this->buffer, $this->options, $this->defaults, $this->userid);
             manager::queue_adhoc_task($task);
-            $this->buffer = [];
         }
 
         // Display the preview result (SCREEN 3).
