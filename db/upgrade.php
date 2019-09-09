@@ -13,19 +13,18 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
-
+defined('MOODLE_INTERNAL') || die();
 
 /**
- * Adds tool_asynccourseimport link in admin tree.
+ * Upgrade script for tool_asynccourseimport
  *
  * @package    tool_asynccourseimport
  * @copyright  2019 Liip
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-defined('MOODLE_INTERNAL') || die();
-
-if ($hassiteconfig) {
-    $url = $CFG->wwwroot . '/' . $CFG->admin . '/tool/asynccourseimport/index.php';
-    $ADMIN->add('courses', new admin_externalpage('asynccourseimport', get_string('pluginname', 'tool_asynccourseimport'), $url));
+function xmldb_tool_asynccourseimport_upgrade($oldversion) {
+    global $CFG, $DB;
+    $result = true;
+    // Any additional steps might be added here and potentially alter the $result value.
+    return $result;
 }
