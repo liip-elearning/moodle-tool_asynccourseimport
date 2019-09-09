@@ -153,6 +153,7 @@ class tool_asyncuploadcourse_processor extends tool_uploadcourse_processor {
             ]
         ));
         $event->trigger();
+        // TODO Check that logs really occur
     }
 
     protected function prepare_report($total, $created, $updated, $deleted, $errors){

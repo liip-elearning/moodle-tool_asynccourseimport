@@ -27,6 +27,8 @@ use tool_uploadcourse_tracker;
 
 class task extends adhoc_task {
 
+    private $max_attempts = 3;
+
     /**
      * @param $content
      * @param array $options Form options
@@ -40,6 +42,7 @@ class task extends adhoc_task {
                 "content" => $content,
                 "options" => $options,
                 "defaults" => $defaults,
+                "attempt" => 1,
                 "fullreport" => [
                     "total" => count($content),
                     "created" => 0,
@@ -68,6 +71,9 @@ class task extends adhoc_task {
         $defaults = (array) $data->defaults;
         $importid = $data->importid ?? csv_import_reader_for_task::get_new_iid('uploadcourse');
 
+        // Try 3 times max
+        $attempt = $data->attempt;
+
         echo "\nExecuting task [" . get_class($this) . " " . $this->get_id() . "]:\n\n";
 
         // This is a fake CSV reader, it just use "content" as if it came from the csv.
@@ -79,8 +85,7 @@ class task extends adhoc_task {
 
         $errors = $processor->get_errors();
 
-        // TODO Limit to 3 attempts instead of < delay
-        if (!empty($errors) and $this->get_fail_delay() < 240) { // 60 / 120 / 240
+        if (!empty($errors) and $attempt < $this->max_attempts) {
 
             // Update Content to not retry succeeded lines.
             $contentforretry = [];
@@ -89,6 +94,7 @@ class task extends adhoc_task {
             }
             $data->content = $contentforretry;
             $data->linenb = count($errors);
+            $data->attempt += 1;
 
             // Update full report
             $currentreport = $processor->get_report();
