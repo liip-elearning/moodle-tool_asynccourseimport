@@ -42,7 +42,7 @@ class importcourse_error extends \core\event\base {
 
     public function get_description() {
         // We intentionally keep this log entry in English.
-        return "The course {$this->other['shortname']} could not be imported. Process id = {$this->other['pid']} ";
+        return "The course {$this->other['shortname']} could not be imported. Task id = {$this->other['task_id']} ";
     }
 
 }
