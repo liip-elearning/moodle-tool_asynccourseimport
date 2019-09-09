@@ -162,7 +162,7 @@ class task extends adhoc_task {
         $message->smallmessage      = '';
         $message->fullmessageformat = FORMAT_HTML;
         $message->name              = 'tasks_status';
-        $message->subject           = 'The asynchronous courses import finished'; // TRANSLATE.
+        $message->subject           = get_string('task_complete', 'tool_asynccourseimport');
         $message->fullmessagehtml   = $msg;
         message_send($message);
 

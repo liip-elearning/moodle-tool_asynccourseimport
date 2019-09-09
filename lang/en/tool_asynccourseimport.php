@@ -14,10 +14,10 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 /**
- * Strings for component 'block_disk_quota', language 'en'
+ * Strings for component 'tool_asynccourseimport', language 'en'
  *
- * @package   block_recent_activity
- * @copyright 2015 Liip AG {@link http://liip.ch}
+ * @package   tool_asynccourseimport
+ * @copyright 2019 Liip AG {@link http://liip.ch}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 $string['pluginname'] = 'Asynchronous course import';
@@ -25,7 +25,9 @@ $string['pluginname'] = 'Asynchronous course import';
 $string['import_footer_message'] =
         "Your courses have been scheduled to be imported. You need to wait as the task is processed by a cron.";
 $string['import_footer_count'] = '{$a} course(s) is/are scheduled to be imported';
-$string['task_incomplete'] = 'Unable to complete the course import';
+
+$string['task_incomplete'] = 'Unable to complete the course import. ';
+$string['task_complete'] = "The asynchronous courses import finished. ";
 
 $string['report_header'] = "A course import task you scheduled has finished.\n";
 $string['report_errors_header'] = "<p>The following courses could not be imported:</p>";
