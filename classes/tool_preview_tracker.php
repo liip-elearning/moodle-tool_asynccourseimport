@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 namespace tool_asynccourseimport;
 
+defined('MOODLE_INTERNAL') || die();
+
 use html_writer;
 use tool_uploadcourse_tracker;
 

@@ -16,6 +16,8 @@
 
 namespace tool_asynccourseimport;
 
+defined('MOODLE_INTERNAL') || die();
+
 require_once($CFG->libdir . '/adminlib.php');
 require_once($CFG->libdir . '/csvlib.class.php');
 
@@ -27,7 +29,7 @@ use tool_uploadcourse_tracker;
 
 class task extends adhoc_task {
 
-    private $max_attempts = 3;
+    private $maxattempts = 3;
 
     /**
      * @param $content
@@ -71,7 +73,7 @@ class task extends adhoc_task {
         $defaults = (array) $data->defaults;
         $importid = $data->importid ?? csv_import_reader_for_task::get_new_iid('uploadcourse');
 
-        // Try 3 times max
+        // Try 3 times max.
         $attempt = $data->attempt;
 
         echo "\nExecuting task [" . get_class($this) . " " . $this->get_id() . "]:\n\n";
@@ -80,23 +82,23 @@ class task extends adhoc_task {
         $cir = new csv_import_reader_for_task($importid, 'uploadcourse', $content);
 
         $processor = new tool_asyncuploadcourse_processor($cir, $options, $defaults);
-        $task_tracker = new tool_uploadcourse_tracker(tool_uploadcourse_tracker::OUTPUT_PLAIN);
-        $processor->execute($task_tracker, $this->get_userid(), $this->get_id());
+        $tasktracker = new tool_uploadcourse_tracker(tool_uploadcourse_tracker::OUTPUT_PLAIN);
+        $processor->execute($tasktracker, $this->get_userid(), $this->get_id());
 
         $errors = $processor->get_errors();
 
-        if (!empty($errors) and $attempt < $this->max_attempts) {
+        if (!empty($errors) and $attempt < $this->maxattempts) {
 
             // Update Content to not retry succeeded lines.
             $contentforretry = [];
-            foreach ($errors as $lineNb => $lineErrors) {
-                $contentforretry[] = $content[$lineNb - 1];
+            foreach ($errors as $linenb => $lineerrors) {
+                $contentforretry[] = $content[$linenb - 1];
             }
             $data->content = $contentforretry;
             $data->linenb = count($errors);
             $data->attempt += 1;
 
-            // Update full report
+            // Update full report.
             $currentreport = $processor->get_report();
             $data->fullreport->created += $currentreport['created'];
             $data->fullreport->updated += $currentreport['updated'];
@@ -110,7 +112,7 @@ class task extends adhoc_task {
             throw new \RuntimeException(get_string("task_incomplete", "tool_asynccourseimport"));
         }
 
-        // No RuntimeException => OVER
+        // No RuntimeException => OVER.
         $this->send_report($data->fullreport, $errors);
     }
 
@@ -120,27 +122,24 @@ class task extends adhoc_task {
      * @throws \coding_exception
      */
     private function send_report($report, $errors = []) {
-        // Notifying
         $msg = get_string('report_header', 'tool_asynccourseimport');
-
         if (count($errors) > 0) {
             $msg .= get_string('report_errors_header', 'tool_asynccourseimport');
             $msg .= "<ul>";
-            foreach ($errors as $lineNb => $lineErrors) {
+            foreach ($errors as $linenb => $lineerrors) {
 
-                $msg .= "<li>IdNumber: " . $lineErrors['data']['idnumber'] .
-                    " Shortname: " . $lineErrors['data']['shortname'] . ". Reasons:";
-
+                $msg .= "<li>IdNumber: " . $lineerrors['data']['idnumber'] .
+                    " Shortname: " . $lineerrors['data']['shortname'] . ". Reasons:";
 
                 // Keys (except 'data') are string identifiers,
                 // their values are lang_string objects.
-                unset($lineErrors['data']);
+                unset($lineerrors['data']);
 
                 $msg .= "<ul>";
 
-                /** @var lang_string $errorLangString */
-                foreach ($lineErrors as $identifier => $errorLangString){
-                    $msg .= "<li>" . $errorLangString->out() . "</li>";
+                /* @var $lineerrors lang_string[] */
+                foreach ($lineerrors as $identifier => $errorlangstring) {
+                    $msg .= "<li>" . $errorlangstring->out() . "</li>";
                 }
                 $msg .= "</ul>";
             }

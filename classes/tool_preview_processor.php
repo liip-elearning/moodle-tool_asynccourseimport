@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 namespace tool_asynccourseimport;
 
+defined('MOODLE_INTERNAL') || die();
+
 use core\task\manager;
 use csv_import_reader;
 use tool_uploadcourse_processor;
@@ -81,7 +83,7 @@ class tool_preview_processor extends tool_uploadcourse_processor {
             $this->buffer = [];
         }
 
-        // Display the preview result (SCREEN 3)
+        // Display the preview result (SCREEN 3).
         $tracker->finish();
         $tracker->results(count($this->buffer), count($this->buffer), 0, 0, null);
         $this->cir->close();

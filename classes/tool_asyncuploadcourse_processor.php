@@ -24,12 +24,13 @@
 
 namespace tool_asynccourseimport;
 
+defined('MOODLE_INTERNAL') || die();
+
 use coding_exception;
 use core_php_time_limit;
 use tool_uploadcourse_processor;
 use tool_uploadcourse_tracker;
 
-defined('MOODLE_INTERNAL') || die();
 require_once($CFG->libdir . '/csvlib.class.php');
 
 /**
@@ -101,18 +102,16 @@ class tool_asyncuploadcourse_processor extends tool_uploadcourse_processor {
                 $errors++;
                 $tracker->output($this->linenb, false, $course->get_errors(), $data);
 
-                // CUSTOM / EXTENSION
+                // CUSTOM / EXTENSION.
                 $this->log_error($course->get_errors(), $data, $userid, $taskid);
             }
         }
 
-        // CUSTOM / EXTENSION
+        // CUSTOM / EXTENSION.
         $this->prepare_report($total, $created, $updated, $deleted, $errors);
 
         $tracker->finish();
         $tracker->results($total, $created, $updated, $deleted, $errors);
-
-
     }
 
     /**
@@ -132,8 +131,8 @@ class tool_asyncuploadcourse_processor extends tool_uploadcourse_processor {
             return;
         }
 
-        // Set data for the report (sent by the caller task)
-        /** @var \lang_string $langstring */
+        // Set data for the report (sent by the caller task).
+        /* @var $errors \lang_string[] */
         foreach ($errors as $code => $langstring) {
             if (!isset($this->errors[$this->linenb])) {
                 $this->errors[$this->linenb] = array();
@@ -142,7 +141,7 @@ class tool_asyncuploadcourse_processor extends tool_uploadcourse_processor {
             $this->errors[$this->linenb]['data'] = $data;
         }
 
-        // Send an event to log the error on the server
+        // Send an event to log the error on the server.
         $event = \tool_asynccourseimport\event\importcourse_error::create(array(
             'context' => $PAGE->context,
             'other' => [
@@ -155,7 +154,7 @@ class tool_asyncuploadcourse_processor extends tool_uploadcourse_processor {
         $event->trigger();
     }
 
-    protected function prepare_report($total, $created, $updated, $deleted, $errors){
+    protected function prepare_report($total, $created, $updated, $deleted, $errors) {
         $this->report = [
             'total' => $total,
             'created' => $created,

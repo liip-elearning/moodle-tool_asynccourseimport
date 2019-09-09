@@ -13,7 +13,10 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 namespace tool_asynccourseimport;
+
+defined('MOODLE_INTERNAL') || die();
 
 /**
  * Class csv_import_reader
@@ -78,7 +81,7 @@ class csv_import_reader_for_task extends \csv_import_reader {
     /**
      * @inheritDoc
      */
-    public function load_csv_content($content, $encoding, $delimiter_name, $column_validation = null, $enclosure = '"') {
+    public function load_csv_content($content, $encoding, $delimitername, $columnvalidation = null, $enclosure = '"') {
         // We don't load the file as we use "data" instead.
     }
 

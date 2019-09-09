@@ -36,19 +36,19 @@ require(__DIR__ . '/../../../config.php');
 require_once($CFG->libdir . '/adminlib.php');
 require_once($CFG->libdir . '/csvlib.class.php');
 
-// Get USER
+// Get USER.
 require_login(null, false);
 if (isguestuser()) {
     throw new require_login_exception('Guests are not allowed here.');
 }
 $userid = optional_param('userid', $USER->id, PARAM_INT);
 
-// Setup the page in "Site admnistration"
+// Setup the page in "Site admnistration".
 admin_externalpage_setup('asynccourseimport');
 
 // Import unique ID used by the CSV Import reader.
 // Used as filename for a temporary file. Not DB related.
-// Parameter sent when submitting the 2nd screen
+// Parameter sent when submitting the 2nd screen.
 $importid = optional_param('importid', '', PARAM_INT);
 
 // How rows to preview. Parameter sent submitting the 1st screen.
@@ -58,7 +58,7 @@ $previewrows = optional_param('previewrows', 10, PARAM_INT);
 $returnurl = new moodle_url('/admin/tool/asynccourseimport/index.php');
 
 if (empty($importid)) {
-    // SCREEN 1 & 2
+    // SCREEN 1 & 2.
     $mform1 = new tool_uploadcourse_step1_form();
     if ($form1data = $mform1->get_data()) {
         $importid = csv_import_reader::get_new_iid('uploadcourse');
@@ -79,11 +79,11 @@ if (empty($importid)) {
         die();
     }
 } else {
-    // SCREEN 3
+    // SCREEN 3.
     $cir = new csv_import_reader($importid, 'uploadcourse');
 }
 
-// Data to set in the form. (Screens 2 & 3)
+// Data to set in the form. (Screens 2 & 3).
 $data = array('importid' => $importid, 'previewrows' => $previewrows);
 
 if (!empty($form1data)) {
@@ -105,10 +105,6 @@ if ($form2data = $mform2->is_cancelled()) {
     redirect($returnurl);
 } else if ($form2data = $mform2->get_data()) {
 
-//    echo "<div style='clear:both;margin-top: 80px;'><pre>";
-//    var_dump($form2data);
-//    echo "</pre></div>";
-
     $options = (array) $form2data->options;
     $defaults = (array) $form2data->defaults;
 
@@ -118,10 +114,6 @@ if ($form2data = $mform2->is_cancelled()) {
     if (!empty($form2data->restorefile)) {
         $options['restorefile'] = $mform2->save_temp_file('restorefile');
     }
-
-//    echo "<div style='clear:both;margin-top: 80px;'><pre>";
-//    var_dump($options['restorefile']);
-//    echo "</pre></div>";
 
     // Liip: The processor is different. It will create tasks.
     $processor = new tool_preview_processor($cir, $options, $defaults, $importid, $userid);
@@ -138,11 +130,11 @@ if ($form2data = $mform2->is_cancelled()) {
         echo $OUTPUT->continue_button($returnurl);
     }
 
+    // FIXME: LIIP We can't delete the file as it's processed via a cron (and the file should then exists).
     // Deleting the file after processing or preview.
-    if (!empty($options['restorefile'])) {
-        // FIXME: LIIP We can't delete the file as it's processed via a cron (and the file should then exists).
-        //@unlink($options['restorefile']);
-    }
+    // if (!empty($options['restorefile'])) {
+        // @unlink($options['restorefile']);
+    // }
 
 } else {
     if (!empty($form1data)) {
