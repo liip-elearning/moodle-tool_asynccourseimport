@@ -109,11 +109,16 @@ class task extends adhoc_task {
             $DB->update_record('task_adhoc', $record);
 
             // Throw an error, so that the task fails and is rescheduled.
-            throw new \RuntimeException(get_string("task_incomplete", "tool_asynccourseimport"));
+            throw new \RuntimeException(get_string("task_incomplete", "tool_asynccourseimport", $this->get_id()));
         }
 
         // No RuntimeException => OVER.
         $this->send_report($data->fullreport, $errors);
+
+        // Delete the restorefile (course backup used as template) if any.
+        if (!empty($options['restorefile'])) {
+            @unlink($options['restorefile']);
+        }
     }
 
     /**

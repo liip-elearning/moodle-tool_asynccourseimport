@@ -26,8 +26,8 @@ $string['import_footer_message'] =
         "Your courses have been scheduled to be imported. You need to wait as the task is processed by a cron.";
 $string['import_footer_count'] = '{$a} course(s) is/are scheduled to be imported';
 
-$string['task_incomplete'] = 'Unable to complete the course import. ';
-$string['task_complete'] = "The asynchronous courses import finished. ";
+$string['task_incomplete'] = "\nUnable to complete the course import (Task id: {$a}). ";
+$string['task_complete'] = "\nThe asynchronous courses import finished. ";
 
 $string['report_header'] = "A course import task you scheduled has finished.\n";
 $string['report_errors_header'] = "<p>The following courses could not be imported:</p>";

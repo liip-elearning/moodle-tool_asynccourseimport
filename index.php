@@ -130,12 +130,6 @@ if ($form2data = $mform2->is_cancelled()) {
         echo $OUTPUT->continue_button($returnurl);
     }
 
-    // FIXME: LIIP We can't delete the file as it's processed via a cron (and the file should then exists).
-    // Deleting the file after processing or preview.
-    // if (!empty($options['restorefile'])) {
-        // @unlink($options['restorefile']);
-    // }
-
 } else {
     if (!empty($form1data)) {
         $options = $form1data->options;
