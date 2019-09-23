@@ -48,7 +48,7 @@ You can choose any of the following methods. As a convention all the commands ar
 
 * Go to http://yourmoodlesite.ch/admin/tool/asynccourseimport/index.php, also available on the *"Course"* tab of the site administration section as "Asynchronous course import".
 * From here, the process is the same as the standard course import (https://docs.moodle.org/37/en/Upload_courses). Except that the outcome is not the import itself but a scheduled task that will perform the import.
-    * Upload one CSV file
+    * Upload a **valid** CSV file.
     * Follow the process (setting options, click on preview & upload courses).
     * See a recap of the errors, and a confirmation message.
 
