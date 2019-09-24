@@ -87,6 +87,12 @@ class task extends adhoc_task {
 
         $errors = $processor->get_errors();
 
+        // Update full report.
+        $currentreport = $processor->get_report();
+        $data->fullreport->created += $currentreport['created'];
+        $data->fullreport->updated += $currentreport['updated'];
+        $data->fullreport->deleted += $currentreport['deleted'];
+
         if (!empty($errors) and $attempt < $this->maxattempts) {
 
             // Update Content to not retry succeeded lines.
@@ -97,12 +103,6 @@ class task extends adhoc_task {
             $data->content = $contentforretry;
             $data->linenb = count($errors);
             $data->attempt += 1;
-
-            // Update full report.
-            $currentreport = $processor->get_report();
-            $data->fullreport->created += $currentreport['created'];
-            $data->fullreport->updated += $currentreport['updated'];
-            $data->fullreport->deleted += $currentreport['deleted'];
 
             $this->set_custom_data($data);
             $record = manager::record_from_adhoc_task($this);
