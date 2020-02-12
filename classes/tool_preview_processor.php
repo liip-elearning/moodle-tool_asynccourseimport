@@ -95,11 +95,9 @@ class tool_preview_processor extends tool_uploadcourse_processor {
         while ($line = $cir->next()) {
             $line = $this->parse_line($line);
             $course = $this->get_course($line);
-            // Note that you can also avoid the "prepare" call to be faster, but the output will have less sense.
-            $result = $course->prepare();
-            if (!$result && $tracker) {
+            if ($course->get_errors() && $tracker) {
                 // Display errors.
-                $tracker->output($this->linenb, $result, $course->get_errors(), $line);
+                $tracker->output($this->linenb, false, $course->get_errors(), $line);
             } else {
                 // On success, we add the line to the buffer so it will be processed in a task.
                 $this->linenb++;

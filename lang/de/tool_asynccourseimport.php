@@ -33,3 +33,7 @@ $string['report_header'] = 'Eine von Ihnen geplante Aufgabe zum Import von Kurse
 $string['report_errors_header'] = '<p>Die folgenden Kurse konnten nicht importiert werden:</p>';
 
 $string['event_importcourse_error'] = 'Ein Kurs konnte während des Async-Kursimportprozesses nicht importiert werden.';
+
+$string['preview_create_all'] = 'Es wird keine Vorschau angezeigt, die Kurse werden ohne Vorabprüfung direkt für den 
+Import eingeplant, da der Upload-Modus <b>"Alle Kurse anlegen, Kurznamen bei Bedarf inkrementieren"</b> ist. 
+Jeder Fehler wird im Benachrichtigungsbericht angezeigt.';

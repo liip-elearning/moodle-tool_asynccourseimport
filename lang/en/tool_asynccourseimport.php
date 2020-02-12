@@ -33,3 +33,7 @@ $string['report_header'] = 'A course import task you scheduled has finished.\n';
 $string['report_errors_header'] = '<p>The following courses could not be imported:</p>';
 
 $string['event_importcourse_error'] = 'A course could not be imported during the Async course import process.';
+
+$string['preview_create_all'] = 'No preview will be shown, the courses will be directly scheduled for import without 
+any pre-check since the Upload mode is <b>"Create all, increment shortname if needed"</b>. 
+Any error will be shown in the Notifications report.';
