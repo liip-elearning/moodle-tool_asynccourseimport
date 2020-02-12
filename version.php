@@ -21,8 +21,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 defined('MOODLE_INTERNAL') || die();
-$plugin->version   = 2019061401;         // The current plugin version (Date: YYYYMMDDXX).
+$plugin->version   = 2020021200;         // The current plugin version (Date: YYYYMMDDXX).
 $plugin->requires  = 2018051700;         // minimum: Moodle 3.5
 $plugin->maturity = MATURITY_RC;
-$plugin->release = 'v1.0';
+$plugin->release = 'v1.1';
 $plugin->component = 'tool_asynccourseimport'; // Full name of the plugin (used for diagnostics).

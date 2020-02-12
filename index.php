@@ -120,8 +120,13 @@ if ($form2data = $mform2->is_cancelled()) {
 
     echo $OUTPUT->header();
     if (isset($form2data->showpreview)) {
-        echo $OUTPUT->heading(get_string('uploadcoursespreview', 'tool_uploadcourse'));
-        $processor->preview($previewrows, new tool_uploadcourse_tracker(tool_uploadcourse_tracker::OUTPUT_HTML));
+        if ($options["mode"]!= tool_uploadcourse_processor::MODE_CREATE_ALL){
+            echo $OUTPUT->heading(get_string('uploadcoursespreview', 'tool_uploadcourse'));
+            $processor->preview($previewrows, new tool_uploadcourse_tracker(tool_uploadcourse_tracker::OUTPUT_HTML));
+        } else {
+            echo $OUTPUT->heading(get_string('uploadcourses', 'tool_uploadcourse'));
+            echo $OUTPUT->notification(get_string('preview_create_all', 'tool_asynccourseimport'));
+        }
         $mform2->display();
     } else {
         echo $OUTPUT->heading(get_string('uploadcoursesresult', 'tool_uploadcourse'));
@@ -141,8 +146,13 @@ if ($form2data = $mform2->is_cancelled()) {
     }
     $processor = new tool_uploadcourse_processor($cir, $options, array());
     echo $OUTPUT->header();
-    echo $OUTPUT->heading(get_string('uploadcoursespreview', 'tool_uploadcourse'));
-    $processor->preview($previewrows, new tool_uploadcourse_tracker(tool_uploadcourse_tracker::OUTPUT_HTML));
+    if ($options["mode"]!= tool_uploadcourse_processor::MODE_CREATE_ALL){
+        echo $OUTPUT->heading(get_string('uploadcoursespreview', 'tool_uploadcourse'));
+        $processor->preview($previewrows, new tool_uploadcourse_tracker(tool_uploadcourse_tracker::OUTPUT_HTML));
+    } else {
+        echo $OUTPUT->heading(get_string('uploadcourses', 'tool_uploadcourse'));
+        echo $OUTPUT->notification(get_string('preview_create_all', 'tool_asynccourseimport'));
+    }
     $mform2->display();
 }
 
