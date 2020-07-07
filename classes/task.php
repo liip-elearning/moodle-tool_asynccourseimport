@@ -143,7 +143,7 @@ class task extends adhoc_task {
                 unset($lineerrors['data']);
                 $linecontext->reasons .= "<ul>";
                 foreach ($lineerrors as $identifier => $errorlangstring) {
-                    $linecontext->reasons .= "<li>" . $errorlangstring->out() . "</li>";
+                    $linecontext->reasons .= \html_writer::tag('li', $errorlangstring->out());
                 }
                 $linecontext->reasons .= "</ul>";
 
@@ -159,7 +159,6 @@ class task extends adhoc_task {
         $msg .= get_string('coursesupdated', 'tool_uploadcourse', $report->updated)."<br/>";
         $msg .= get_string('coursesdeleted', 'tool_uploadcourse', $report->deleted)."<br/>";
         $msg .= get_string('courseserrors', 'tool_uploadcourse', count($errors))."<br/>";
-
 
         $message = new message();
         $message->component         = 'tool_asynccourseimport';
