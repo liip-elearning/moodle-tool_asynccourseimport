@@ -32,6 +32,7 @@ $string['task_complete'] = 'The asynchronous courses import finished. ';
 $string['report_header'] = 'A course import task you scheduled has finished.';
 $string['report_errors_header'] = '<p>The following courses could not be imported:</p>';
 $string['report_errors_line'] = '<li>Idnumber: ${a->idnumber} Shortname: ${a->shortname}. Reasons: ${a->reasons}</li>';
+$string['report_summary'] = 'Summary';
 
 $string['event_importcourse_error'] = 'A course could not be imported during the Async course import process.';
 

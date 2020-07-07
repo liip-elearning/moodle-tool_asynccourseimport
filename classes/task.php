@@ -152,13 +152,14 @@ class task extends adhoc_task {
             $msg .= "</ul>";
         }
 
-        $msg .= "<br><strong>Summary:</strong><br>
-            Courses total: ".$report->total."<br>
-            Courses created: ".$report->created."<br>
-            Courses updated: ".$report->updated."<br>
-            Courses deleted: ".$report->deleted."<br>
-            Courses errors: " . count($errors) . "<br>
-        ";
+        $msg .= "<br><strong>".get_string('report_summary', 'tool_asynccourseimport').":</strong><br />";
+
+        $msg .= get_string('coursestotal', 'tool_uploadcourse', $report->total)."<br/>";
+        $msg .= get_string('coursescreated', 'tool_uploadcourse', $report->created)."<br/>";
+        $msg .= get_string('coursesupdated', 'tool_uploadcourse', $report->updated)."<br/>";
+        $msg .= get_string('coursesdeleted', 'tool_uploadcourse', $report->deleted)."<br/>";
+        $msg .= get_string('courseserrors', 'tool_uploadcourse', count($errors))."<br/>";
+
 
         $message = new message();
         $message->component         = 'tool_asynccourseimport';
