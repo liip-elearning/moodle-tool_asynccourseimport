@@ -29,11 +29,10 @@ $string['import_footer_count'] = '{$a} course(s) is/are scheduled to be imported
 $string['task_incomplete'] = 'Unable to complete the course import (Task id: {$a}). ';
 $string['task_complete'] = 'The asynchronous courses import finished. ';
 
-$string['report_header'] = 'A course import task you scheduled has finished.\n';
+$string['report_header'] = 'A course import task you scheduled has finished.';
 $string['report_errors_header'] = '<p>The following courses could not be imported:</p>';
+$string['report_errors_line'] = '<li>Idnumber: ${a->idnumber} Shortname: ${a->shortname}. Reasons: ${a->reasons}</li>';
 
 $string['event_importcourse_error'] = 'A course could not be imported during the Async course import process.';
 
-$string['preview_create_all'] = 'No preview will be shown, the courses will be directly scheduled for import without 
-any pre-check since the Upload mode is <b>"Create all, increment shortname if needed"</b>. 
-Any error will be shown in the Notifications report.';
+$string['preview_create_all'] = 'No preview will be shown, the courses will be directly scheduled for import without any pre-check since the Upload mode is <b>"Create all, increment shortname if needed"</b>. Any error will be shown in the Notifications report.';

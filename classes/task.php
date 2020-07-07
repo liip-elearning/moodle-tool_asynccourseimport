@@ -133,20 +133,21 @@ class task extends adhoc_task {
             $msg .= "<ul>";
             foreach ($errors as $linenb => $lineerrors) {
 
-                $msg .= "<li>IdNumber: " . $lineerrors['data']['idnumber'] .
-                    " Shortname: " . $lineerrors['data']['shortname'] . ". Reasons:";
+                $linecontext = new stdClass();
+                $linecontext->idnumber = $lineerrors['data']['idnumber'];
+                $linecontext->shortname = $lineerrors['data']['shortname'];
+                $linecontext->reasons = "";
 
                 // Keys (except 'data') are string identifiers,
                 // their values are lang_string objects.
                 unset($lineerrors['data']);
-
-                $msg .= "<ul>";
-
-                /* @var $lineerrors lang_string[] */
+                $linecontext->reasons .= "<ul>";
                 foreach ($lineerrors as $identifier => $errorlangstring) {
-                    $msg .= "<li>" . $errorlangstring->out() . "</li>";
+                    $linecontext->reasons .= "<li>" . $errorlangstring->out() . "</li>";
                 }
-                $msg .= "</ul>";
+                $linecontext->reasons .= "</ul>";
+
+                $msg .= get_string('report_errors_line', 'tool_asynccourseimport', $linecontext);
             }
             $msg .= "</ul>";
         }
