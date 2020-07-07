@@ -1,0 +1,5 @@
+.git-blame-ignore-revs export-ignore
+.gitattributes export-ignore
+.gitignore export-ignore
+.netbeans.xml export-ignore
+release.sh export-ignore
