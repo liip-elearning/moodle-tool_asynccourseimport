@@ -72,6 +72,7 @@ class tool_asyncuploadcourse_processor extends tool_uploadcourse_processor {
         $updated = 0;
         $deleted = 0;
         $errors = 0;
+        $successes = [];
 
         // We will most certainly need extra time and memory to process big files.
         core_php_time_limit::raise();
@@ -98,6 +99,13 @@ class tool_asyncuploadcourse_processor extends tool_uploadcourse_processor {
 
                 $data = array_merge($data, $course->get_data(), array('id' => $course->get_id()));
                 $tracker->output($this->linenb, true, $status, $data);
+
+                // CUSTOM / EXTENSION to pass success statuses to the report
+                $successes[] = [
+                    "linenb" => $this->linenb,
+                    "status" => $status,
+                    "data" => $data
+                ];
             } else {
                 $errors++;
                 $tracker->output($this->linenb, false, $course->get_errors(), $data);
@@ -108,7 +116,7 @@ class tool_asyncuploadcourse_processor extends tool_uploadcourse_processor {
         }
 
         // CUSTOM / EXTENSION.
-        $this->prepare_report($total, $created, $updated, $deleted, $errors);
+        $this->prepare_report($total, $created, $updated, $deleted, $errors, $successes);
 
         $tracker->finish();
         $tracker->results($total, $created, $updated, $deleted, $errors);
@@ -154,13 +162,14 @@ class tool_asyncuploadcourse_processor extends tool_uploadcourse_processor {
         $event->trigger();
     }
 
-    protected function prepare_report($total, $created, $updated, $deleted, $errors) {
+    protected function prepare_report($total, $created, $updated, $deleted, $errors, $successes) {
         $this->report = [
             'total' => $total,
             'created' => $created,
             'updated' => $updated,
             'deleted' => $deleted,
             'errors' => $errors,
+            'successes' => $successes,
         ];
     }
 

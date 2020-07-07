@@ -92,6 +92,7 @@ class task extends adhoc_task {
         $data->fullreport->created += $currentreport['created'];
         $data->fullreport->updated += $currentreport['updated'];
         $data->fullreport->deleted += $currentreport['deleted'];
+        $data->fullreport->successes = $currentreport['successes'];
 
         if (!empty($errors) and $attempt < $this->maxattempts) {
 
@@ -159,6 +160,21 @@ class task extends adhoc_task {
         $msg .= get_string('coursesupdated', 'tool_uploadcourse', $report->updated)."<br/>";
         $msg .= get_string('coursesdeleted', 'tool_uploadcourse', $report->deleted)."<br/>";
         $msg .= get_string('courseserrors', 'tool_uploadcourse', count($errors))."<br/>";
+
+        $msg .= "<br><strong>".get_string('report_results', 'tool_asynccourseimport').":</strong><br />";
+
+        if (count($report->successes) > 0) {
+            // If we have successes, display the HTML table in the notification.
+            // Put it after the summary as it will be parsed like that anyway.
+            $tasktracker = new tool_uploadcourse_tracker(tool_uploadcourse_tracker::OUTPUT_HTML);
+            ob_start();
+            $tasktracker->start();
+            foreach ($report->successes as $success) {
+                $tasktracker->output($success["linenb"], true, $success["status"], $success["data"]);
+            }
+            $msg .= ob_get_contents();
+            ob_end_clean();
+        }
 
         $message = new message();
         $message->component         = 'tool_asynccourseimport';
