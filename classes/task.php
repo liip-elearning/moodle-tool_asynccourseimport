@@ -134,7 +134,7 @@ class task extends adhoc_task {
             $msg .= "<ul>";
             foreach ($errors as $linenb => $lineerrors) {
 
-                $linecontext = new stdClass();
+                $linecontext = new \stdClass();
                 $linecontext->idnumber = $lineerrors['data']['idnumber'];
                 $linecontext->shortname = $lineerrors['data']['shortname'];
                 $linecontext->reasons = "";
