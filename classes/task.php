@@ -146,7 +146,7 @@ class task extends adhoc_task {
             foreach ($errors as $linenb => $lineerrors) {
 
                 $linecontext = new \stdClass();
-                $linecontext->idnumber = $lineerrors['data']['idnumber'];
+                $linecontext->idnumber = array_key_exists('idnumber', $lineerrors['data']) ? $lineerrors['data']['idnumber'] : '';
                 $linecontext->shortname = $lineerrors['data']['shortname'];
                 $linecontext->reasons = "";
 
