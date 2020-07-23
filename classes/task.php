@@ -92,7 +92,18 @@ class task extends adhoc_task {
         $data->fullreport->created += $currentreport['created'];
         $data->fullreport->updated += $currentreport['updated'];
         $data->fullreport->deleted += $currentreport['deleted'];
-        $data->fullreport->successes = $currentreport['successes'];
+        if (empty($data->fullreport->successes)) {
+            $data->fullreport->successes = [];
+        }
+        foreach ($currentreport['successes'] as $success) {
+            // Render the strings.
+            if (is_array($success['status'])) {
+                $success['status'] = implode(\html_writer::empty_tag('br'), $success["status"]);
+            } else {
+                $success['status'] = (string)$success['status'];
+            }
+            $data->fullreport->successes[] = $success;
+        }
 
         if (!empty($errors) and $attempt < $this->maxattempts) {
 
