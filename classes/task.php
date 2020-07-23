@@ -181,7 +181,8 @@ class task extends adhoc_task {
             ob_start();
             $tasktracker->start();
             foreach ($report->successes as $success) {
-                $tasktracker->output($success["linenb"], true, $success["status"], $success["data"]);
+                $sarray = (array)$success;
+                $tasktracker->output($sarray["linenb"], true, $sarray["status"], (array)$sarray["data"]);
             }
             $msg .= ob_get_contents();
             ob_end_clean();
