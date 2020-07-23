@@ -76,7 +76,7 @@ class task extends adhoc_task {
         // Try 3 times max.
         $attempt = $data->attempt;
 
-        echo "\nExecuting task [" . get_class($this) . " " . $this->get_id() . "]:\n\n";
+        echo "\nExecuting task [" . get_class($this) . " " . $this->get_id() . " (attempt ".$attempt."/".$this->maxattempts.")]:\n\n";
 
         // This is a fake CSV reader, it just use "content" as if it came from the csv.
         $cir = new csv_import_reader_for_task($importid, 'uploadcourse', $content);
@@ -92,7 +92,18 @@ class task extends adhoc_task {
         $data->fullreport->created += $currentreport['created'];
         $data->fullreport->updated += $currentreport['updated'];
         $data->fullreport->deleted += $currentreport['deleted'];
-        $data->fullreport->successes = $currentreport['successes'];
+        if (empty($data->fullreport->successes)) {
+            $data->fullreport->successes = [];
+        }
+        foreach ($currentreport['successes'] as $success) {
+            // Render the strings.
+            if (is_array($success['status'])) {
+                $success['status'] = implode(\html_writer::empty_tag('br'), $success["status"]);
+            } else {
+                $success['status'] = (string)$success['status'];
+            }
+            $data->fullreport->successes[] = $success;
+        }
 
         if (!empty($errors) and $attempt < $this->maxattempts) {
 
@@ -135,7 +146,7 @@ class task extends adhoc_task {
             foreach ($errors as $linenb => $lineerrors) {
 
                 $linecontext = new \stdClass();
-                $linecontext->idnumber = $lineerrors['data']['idnumber'];
+                $linecontext->idnumber = array_key_exists('idnumber', $lineerrors['data']) ? $lineerrors['data']['idnumber'] : '';
                 $linecontext->shortname = $lineerrors['data']['shortname'];
                 $linecontext->reasons = "";
 
@@ -170,7 +181,8 @@ class task extends adhoc_task {
             ob_start();
             $tasktracker->start();
             foreach ($report->successes as $success) {
-                $tasktracker->output($success["linenb"], true, $success["status"], $success["data"]);
+                $sarray = (array)$success;
+                $tasktracker->output($sarray["linenb"], true, $sarray["status"], (array)$sarray["data"]);
             }
             $msg .= ob_get_contents();
             ob_end_clean();
