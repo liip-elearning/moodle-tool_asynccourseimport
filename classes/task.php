@@ -76,7 +76,7 @@ class task extends adhoc_task {
         // Try 3 times max.
         $attempt = $data->attempt;
 
-        echo "\nExecuting task [" . get_class($this) . " " . $this->get_id() . "]:\n\n";
+        echo "\nExecuting task [" . get_class($this) . " " . $this->get_id() . " (attempt ".$attempt."/".$this->maxattempts.")]:\n\n";
 
         // This is a fake CSV reader, it just use "content" as if it came from the csv.
         $cir = new csv_import_reader_for_task($importid, 'uploadcourse', $content);
