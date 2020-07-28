@@ -98,7 +98,7 @@ class task extends adhoc_task {
         foreach ($currentreport['successes'] as $success) {
             // Render the strings.
             if (is_array($success['status'])) {
-                $success['status'] = implode(\html_writer::empty_tag('br'), $success["status"]);
+                $success['status'] = implode(', ', $success["status"]);
             } else {
                 $success['status'] = (string)$success['status'];
             }
