@@ -98,7 +98,7 @@ class task extends adhoc_task {
         foreach ($currentreport['successes'] as $success) {
             // Render the strings.
             if (is_array($success['status'])) {
-                $success['status'] = implode(\html_writer::empty_tag('br'), $success["status"]);
+                $success['status'] = implode(', ', $success["status"]);
             } else {
                 $success['status'] = (string)$success['status'];
             }
@@ -180,9 +180,10 @@ class task extends adhoc_task {
             $tasktracker = new tool_uploadcourse_tracker(tool_uploadcourse_tracker::OUTPUT_HTML);
             ob_start();
             $tasktracker->start();
+            $linenb = 0;
             foreach ($report->successes as $success) {
                 $sarray = (array)$success;
-                $tasktracker->output($sarray["linenb"], true, $sarray["status"], (array)$sarray["data"]);
+                $tasktracker->output(++$linenb, true, $sarray["status"], (array)$sarray["data"]);
             }
             $msg .= ob_get_contents();
             ob_end_clean();
